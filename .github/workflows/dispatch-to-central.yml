@@ -1,0 +1,16 @@
+name: Dispatch SonarQube Scan
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send dispatch to central-hub
+        run: |
+          curl -X POST https://api.github.com/repos/CloudOpsForge/central-hub/dispatches \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: token ${{ secrets.CENTRAL_HUB_TOKEN }}" \
+            -d '{"event_type":"sonarqube_scan","client_payload":{"repo":"${{ github.repository }}","pr":"${{ github.event.pull_request.number }}"}}'
